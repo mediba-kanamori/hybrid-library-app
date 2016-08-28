@@ -37,12 +37,28 @@ class HybridLibrary extends Component {
         rowHasChanged: (row1, row2) => row1 !== row2
       })
     };
+    
+    this.itemsRef = firebase.database().ref().child('items');
+  }
+  
+  listenForItems(itemsRef) {
+    itemsRef.on('value', snap => {
+      let items = [];
+      snap.forEach(child => {
+        items.push({
+          title: child.val().title,
+          _key: child.key
+        });
+      });
+      
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(items)
+      });
+    });
   }
   
   componentDidMount() {
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows([{ title: 'Pizza' }])
-    });
+    this.listenForItems(this.itemsRef);
   }
   
   render() {
@@ -50,7 +66,11 @@ class HybridLibrary extends Component {
       <View style={styles.container}>
         <StatusBar title="Hybrid Library" />
         
-        <ListView dataSource={this.state.dataSource} renderRow={this.renderItem.bind(this)} />
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this.renderItem.bind(this)}
+          enableEmptySections={true}
+          style={styles.listView} />
         
         <ActionButton />
       </View>
