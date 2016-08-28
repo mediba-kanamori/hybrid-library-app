@@ -9,7 +9,8 @@ import {
   AppRegistry,
   Text,
   ListView,
-  View
+  View,
+  AlertIOS,
 } from 'react-native';
 
 import firebase from 'firebase';
@@ -72,7 +73,7 @@ class HybridLibrary extends Component {
           enableEmptySections={true}
           style={styles.listView} />
         
-        <ActionButton />
+        <ActionButton title="Add" onPress={this.addItem.bind(this)} />
       </View>
     );
   }
@@ -80,6 +81,22 @@ class HybridLibrary extends Component {
   renderItem(item) {
     return (
       <ListItem item={item} />
+    );
+  }
+  
+  addItem() {
+    AlertIOS.prompt(
+      'Add New Item',
+      null,
+      [
+        {
+          text: 'Add',
+          onPress: text => {
+            this.itemsRef.push({ title: text })
+          }
+        },
+      ],
+      'plain-text'
     );
   }
 }
