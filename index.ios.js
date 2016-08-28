@@ -7,36 +7,59 @@
 import React, { Component } from 'react';
 import {
   AppRegistry,
-  StyleSheet,
   Text,
+  ListView,
   View
 } from 'react-native';
 
 import firebase from 'firebase';
 
 import theme from './src/theme';
+import styles from './src/styles';
 
-import FloatingActionButton from './src/components/FloatingActionButton';
-
-import Icon from 'react-native-vector-icons/FontAwesome';
+import StatusBar from './src/components/StatusBar';
+import ActionButton from './src/components/ActionButton';
+import ListItem from './src/components/ListItem';
 
 class HybridLibrary extends Component {
-  constractor() {
+  constructor(props) {
+    super(props);
+    
     firebase.initializeApp({
       apiKey: "AIzaSyCwl33QyatT-anRNzGrfEBT4D-vEwmHmGQ",
       authDomain: "library-dac5d.firebaseapp.com",
       databaseURL: "https://library-dac5d.firebaseio.com",
       storageBucket: "library-dac5d.appspot.com",
     });
+    
+    this.state = {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2
+      })
+    };
+  }
+  
+  componentDidMount() {
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows([{ title: 'Pizza' }])
+    });
   }
   
   render() {
     return (
-      <View>
-        <FloatingActionButton>
-          <Icon name="cart-plus" size={30} color="white" />
-        </FloatingActionButton>
+      <View style={styles.container}>
+        <StatusBar title="Hybrid Library" />
+        
+        <ListView dataSource={this.state.dataSource} renderRow={this.renderItem.bind(this)} />
+        
+        <ActionButton />
       </View>
+    );
+  }
+  
+  renderItem(item) {
+    return (
+      <ListItem item={item} />
     );
   }
 }
