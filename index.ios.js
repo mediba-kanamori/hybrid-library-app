@@ -65,14 +65,13 @@ class HybridLibrary extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <StatusBar title="Hybrid Library" />
-        
         <ListView
           dataSource={this.state.dataSource}
           renderRow={this.renderItem.bind(this)}
           enableEmptySections={true}
           style={styles.listView} />
         
+        <StatusBar title="Hybrid Library" />
         <ActionButton title="Add" onPress={this.addItem.bind(this)} />
       </View>
     );
@@ -81,11 +80,11 @@ class HybridLibrary extends Component {
   renderItem(item) {
     const onPress = () => {
       AlertIOS.prompt(
-        '返却する',
+        'かりる？',
         null,
         [
-          { text: 'Return', onPress: () => this.itemsRef.child(item._key).remove() },
-          { text: 'Cancel', onPress: () => console.log('Cancel Pressed') }
+          { text: 'かりる', onPress: () => console.log('Cancel Pressed') },
+          { text: 'やめる', onPress: () => console.log('Cancel Pressed') }
         ],
         'default'
       );

@@ -1,4 +1,8 @@
 import { StyleSheet } from 'react-native';
+import {
+  getTheme,
+  MKColor
+} from 'react-native-material-kit';
 
 const styles = StyleSheet.create({
   container: {
@@ -10,22 +14,34 @@ const styles = StyleSheet.create({
   liContainer: {
     flex: 2,
   },
-  liText: {
-    color: '#333',
-    fontSize: 16
+  appBar: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    left: 0,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: .28,
+    shadowColor: 'black',
+    elevation: 3,
   },
-  navbar: {
+  navBar: {
+    backgroundColor: getTheme().primaryColor,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 44,
-    flexDirection: 'row'
+    height: 48,
+    flexDirection: 'row',
   },
-  navbarTitle: {
-    color: '#444',
+  navBarIcon: {
+    marginRight: 5,
+    color: 'white',
+  },
+  navBarTitle: {
+    color: 'white',
     fontSize: 16,
     fontWeight: '500'
   },
   statusBar: {
+    backgroundColor: getTheme().primaryColor,
     height: 22
   },
 });
