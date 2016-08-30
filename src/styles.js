@@ -1,28 +1,37 @@
 import { StyleSheet } from 'react-native';
 import {
   getTheme,
-  MKColor
 } from 'react-native-material-kit';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  listView: {
-    flex: 1
+  itemList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
-  liContainer: {
-    flex: 2,
+  item: {
+    position: 'relative',
+    flex: 1,
+    width: 156,
+    height: 252,
+    margin: 2,
+  },
+  itemImage: {
+    height: 252,
+    resizeMode: 'cover',
+    borderRadius: 2,
   },
   appBar: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    left: 0,
+    alignSelf: 'stretch',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: .28,
     shadowColor: 'black',
     elevation: 3,
+    zIndex: 100,
   },
   navBar: {
     backgroundColor: getTheme().primaryColor,
