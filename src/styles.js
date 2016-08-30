@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   },
   statusBar: {
     height: 22
-  }
+  },
 });
 
 export default styles;
