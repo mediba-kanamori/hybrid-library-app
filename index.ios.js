@@ -79,8 +79,20 @@ class HybridLibrary extends Component {
   }
   
   renderItem(item) {
+    const onPress = () => {
+      AlertIOS.prompt(
+        '返却する',
+        null,
+        [
+          { text: 'Return', onPress: () => this.itemsRef.child(item._key).remove() },
+          { text: 'Cancel', onPress: () => console.log('Cancel Pressed') }
+        ],
+        'default'
+      );
+    }
+  
     return (
-      <ListItem item={item} />
+      <ListItem item={item} onPress={onPress} />
     );
   }
   
@@ -89,6 +101,7 @@ class HybridLibrary extends Component {
       'Add New Item',
       null,
       [
+        { text: 'Cancel', onPress: () => console.log('Cancel Pressed') },
         {
           text: 'Add',
           onPress: text => {
