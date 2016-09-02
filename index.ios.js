@@ -12,6 +12,7 @@ import {
   View,
   AlertIOS,
 } from 'react-native';
+import Camera from 'react-native-camera';
 
 import firebase from 'firebase';
 
@@ -33,13 +34,15 @@ class HybridLibrary extends Component {
       storageBucket: "library-dac5d.appspot.com",
     });
 
+    this.itemsRef = firebase.database().ref().child('items');
+
     this.state = {
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2
       })
     };
 
-    this.itemsRef = firebase.database().ref().child('items');
+    this.camera = null;
   }
 
   listenForItems(itemsRef) {
@@ -66,6 +69,14 @@ class HybridLibrary extends Component {
     return (
       <View style={styles.container}>
         <StatusBar title="Hybrid Library" />
+
+        <Camera
+          ref={cam => this.camera = cam}
+          style={{flex:1}}
+          aspect={Camera.constants.Aspect.fill}
+          onBarCodeRead={this.readBarCode.bind(this)}>
+          <Text>[CAPTURE BARCODE !]</Text>
+        </Camera>
 
         <ListView
           dataSource={this.state.dataSource}
@@ -94,6 +105,19 @@ class HybridLibrary extends Component {
     return (
       <ListItem item={item} onPress={onPress} />
     );
+  }
+
+  readBarCode(e) {
+      AlertIOS.alert(
+        'Barcode',
+        `${e.type}: ${e.data}`,
+      );
+  }
+
+  takePicture() {
+    this.camera.capture()
+      .then((data) => console.log(data))
+      .catch(err => console.error(err));
   }
 
   addItem() {
