@@ -10,6 +10,7 @@ import {
   Text,
   ListView,
   View,
+  Navigator,
   AlertIOS,
 } from 'react-native';
 import Camera from 'react-native-camera';
@@ -39,7 +40,8 @@ class HybridLibrary extends Component {
     this.state = {
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2
-      })
+      }),
+      showCamera: false,
     };
 
     this.camera = null;
@@ -70,23 +72,48 @@ class HybridLibrary extends Component {
       <View style={styles.container}>
         <StatusBar title="Hybrid Library" />
 
-        <Camera
-          ref={cam => this.camera = cam}
-          style={{flex:1}}
-          aspect={Camera.constants.Aspect.fill}
-          onBarCodeRead={this.readBarCode.bind(this)}>
-          <Text>[CAPTURE BARCODE !]</Text>
-        </Camera>
+        <Navigator
+          style={{alignSelf: 'stretch'}}
+          initialRoute={{name: 'Books'}}
+          renderScene={this.renderScene.bind(this)} />
 
+        <ActionButton title="Add" onPress={this.navigateBarCodeReader.bind(this)} />
+      </View>
+    );
+  }
+
+  renderScene(route, navigator) {
+    if (!this.navigator) {
+      this.navigator = navigator;
+    }
+
+    if (route.name === 'Books') {
+      return (
         <ListView
           dataSource={this.state.dataSource}
           enableEmptySections={true}
           contentContainerStyle={styles.itemList}
           renderRow={this.renderItem.bind(this)} />
+      );
+    }
 
-        <ActionButton title="Add" onPress={this.addItem.bind(this)} />
-      </View>
-    );
+    if (route.name === 'BarCodeReader') {
+      if (this.state.showCamera) {
+        return (
+          <Camera
+            ref={cam => this.camera = cam}
+            style={{flex:1}}
+            aspect={Camera.constants.Aspect.fill}
+            onBarCodeRead={this.readBarCode.bind(this)}>
+            <Text>[CAPTURE BARCODE !]</Text>
+          </Camera>
+        );
+      }
+
+      return (
+        <View />
+      )
+    }
   }
 
   renderItem(item) {
@@ -95,8 +122,8 @@ class HybridLibrary extends Component {
         'かりる？',
         null,
         [
-          { text: 'かりる', onPress: () => console.log('Cancel Pressed') },
-          { text: 'やめる', onPress: () => console.log('Cancel Pressed') }
+          { text: 'かりる', onPress: () => console.log('Cancel Pressed'), style: 'cancel', },
+          { text: 'やめる', onPress: () => console.log('Cancel Pressed'), style: 'destructive', }
         ],
         'default'
       );
@@ -107,17 +134,38 @@ class HybridLibrary extends Component {
     );
   }
 
-  readBarCode(e) {
-      AlertIOS.alert(
-        'Barcode',
-        `${e.type}: ${e.data}`,
-      );
+  navigateBarCodeReader() {
+    this.setState({ showCamera: true });
+
+    this.navigator.push({
+      name: 'BarCodeReader',
+    });
   }
 
-  takePicture() {
-    this.camera.capture()
-      .then((data) => console.log(data))
-      .catch(err => console.error(err));
+  readBarCode(e) {
+    this.setState({ showCamera: false });
+
+    console.log(`${e.type}: ${e.data}`);
+
+    AlertIOS.prompt(
+      '情熱プログラマー',
+      'かりる？',
+      [
+        { text: 'やめる', onPress: () => this.navigator.push({ name: 'Books', }) },
+        {
+          text: 'かりる',
+          onPress: () => {
+            AlertIOS.alert(
+              'かしだし完了',
+              '9/20までに読んでね！',
+              () => this.navigator.push({ name: 'Books', }),
+            );
+          }
+        },
+      ],
+      null,
+      'default'
+    );
   }
 
   addItem() {
